@@ -1,0 +1,17 @@
+.wrp {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.wrp::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: block;
+  height: 16px;
+  width: 16px;
+  background: url('../../search.png') no-repeat;
+  background-size: contain;
+}

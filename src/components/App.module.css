@@ -1,0 +1,21 @@
+.title {
+  margin: 6px 0;
+  font-size: 1.4rem;
+}
+
+.wrp {
+  height: 100%;
+  padding: 14px;
+  padding-bottom: 60px;
+}
+
+.wrp::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 70px;
+  width: 100%;
+  background: linear-gradient(to top, rgba(35,37,38,1) 40%, rgba(35,37,38,0) 110%);
+  z-index: 1;
+}
