@@ -1,63 +1,74 @@
-import React, { Component } from 'react';
+import React from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
 import PropTypes from 'prop-types';
 import styles from './ContactForm.module.css';
 
-export default class ContactForm extends Component {
-  static propTypes = {
-    onAddedContact: PropTypes.func.isRequired,
-  };
+const validName = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
+const validNumber = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
 
-  state = {
-    name: '',
-    number: '',
-  };
+const ContactForm = ({ onAddedContact }) => {
+  return (
+    <Formik
+      initialValues={{ name: '', number: '' }}
+      validate={values => {
+        const errors = {};
+        if (!values.name) {
+          errors.name = 'This is required field';
+        } else if (!values.number) {
+          errors.number = 'This is required field';
+        } else if (!validName.test(values.name)) {
+          errors.name = 'Invalid name';
+        } else if (!validNumber.test(values.number)) {
+          errors.number = 'Invalid number';
+        }
 
-  handleChanges = ({ target }) => {
-    const { name, value } = target;
-    this.setState({ [name]: value });
-  };
+        return errors;
+      }}
+      onSubmit={values => onAddedContact(values)}
+    >
+      {() => (
+        <Form>
+          <label className={styles.label}>
+            <span className="subtitle">Name</span>
+            <Field
+              className={styles.input}
+              type="text"
+              name="name"
+              placeholder="Enter the contact name..."
+              autoComplete="off"
+            />
+            <ErrorMessage
+              name="name"
+              render={msg => <div className={styles.errors}>{msg}</div>}
+            />
+          </label>
 
-  handleAddedContact = e => {
-    e.preventDefault();
-    this.props.onAddedContact({ ...this.state });
-    this.setState({ name: '', number: '' });
-  };
+          <label className={styles.label}>
+            <span className="subtitle">Number</span>
+            <Field
+              className={styles.input}
+              type="tel"
+              name="number"
+              placeholder="Enter the number..."
+              autoComplete="off"
+            />
+            <ErrorMessage
+              name="number"
+              render={msg => <div className={styles.errors}>{msg}</div>}
+            />
+          </label>
 
-  render() {
-    const { name, number } = this.state;
+          <button className={styles.btn} type="submit">
+            Add contact
+          </button>
+        </Form>
+      )}
+    </Formik>
+  );
+};
 
-    return (
-      <>
-        <label>
-          <span className="subtitle">Name</span>
-          <input
-            className={styles.input}
-            type="input"
-            name="name"
-            value={name}
-            onChange={this.handleChanges}
-            autoComplete="off"
-          />
-        </label>
-        <label>
-          <span className="subtitle">Number</span>
-          <input
-            className={styles.input}
-            type="phone"
-            name="number"
-            value={number}
-            onChange={this.handleChanges}
-            autoComplete="off"
-          />
-        </label>
-        <button
-          className={styles.btn}
-          type="button"
-          onClick={this.handleAddedContact}
-        >
-          Add contact
-        </button>
-      </>
-    );
-  }
-}
+ContactForm.propTypes = {
+  onAddedContact: PropTypes.func.isRequired,
+};
+
+export default ContactForm;

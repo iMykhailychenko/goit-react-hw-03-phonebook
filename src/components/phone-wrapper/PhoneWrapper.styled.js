@@ -2,10 +2,10 @@ import styled from 'styled-components';
 
 const PhoneWrapper = styled.div`
   position: relative;
-  height: 610px;
-  width: 300px;
+  height: 690px;
+  width: 350px;
+  padding-top: 32px;
   padding-bottom: 20px;
-  padding-top: 20px;
   border: 14px solid #333536;
   border-radius: 38px;
   background: #232526;
@@ -18,8 +18,8 @@ const PhoneWrapper = styled.div`
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    height: 24px;
-    width: 160px;
+    height: 34px;
+    width: 200px;
     background: #333536;
     border-radius: 0 0 16px 16px;
     z-index: 2;

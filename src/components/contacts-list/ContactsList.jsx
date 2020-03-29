@@ -1,16 +1,26 @@
 import React from 'react';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import styles from './ContactsList.module.css';
 
-const ContactsForm = ({ contacts, onRemove }) => {
+// styles
+import styles from './ContactsList.module.css';
+import popTransition from '../transitions/pop.module.css';
+
+const ContactsForm = ({ contacts, onRemove, isOpen }) => {
+  const boxHeight = classNames({
+    contactsListWrp: true,
+    contactsListWrpOpen: !isOpen,
+  });
+
   return (
-    contacts && (
-      <div className={styles.wrp}>
-        <ul className={styles.list}>
-          {contacts.map(({ id, name, number }) => (
+    <div className={boxHeight}>
+      <TransitionGroup component="ul" className={styles.list}>
+        {contacts.map(({ id, name, number }) => (
+          <CSSTransition key={id} timeout={250} classNames={popTransition}>
             <li className={styles.item} key={id}>
               <div>
-                <span>{`${name}:`}</span>
+                <span>{`${name}: `}</span>
                 <span>{`${number}`}</span>
               </div>
               <button
@@ -22,10 +32,10 @@ const ContactsForm = ({ contacts, onRemove }) => {
                 &#10005;
               </button>
             </li>
-          ))}
-        </ul>
-      </div>
-    )
+          </CSSTransition>
+        ))}
+      </TransitionGroup>
+    </div>
   );
 };
 
@@ -38,6 +48,7 @@ ContactsForm.propTypes = {
     }).isRequired,
   ).isRequired,
   onRemove: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
 };
 
 export default ContactsForm;

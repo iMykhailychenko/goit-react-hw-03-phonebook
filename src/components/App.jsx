@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { CSSTransition } from 'react-transition-group';
+import classNames from 'classnames';
+import uuidv1 from 'uuid/v1';
 
 // impor components
 import PhoneWrapper from './phone-wrapper/PhoneWrapper.styled';
@@ -6,74 +9,62 @@ import ContactForm from './contact-form/ContactForm';
 import ContactsList from './contacts-list/ContactsList';
 import Filter from './filter/Filter';
 import Notification from './notification/Notification';
+import Duplicate from './render-props/Duplicate';
 
 // import styles
+import slideUp from './transitions/slideUp.module.css';
+import alert from './transitions/alert.module.css';
+import slideUpForm from './transitions/slideUpForm.module.css';
 import styles from './App.module.css';
+import './transitions/slideTitle.css';
 import './base.css';
 
 // import utils
+import { defaultValue, filterTasks } from './helpers/helpers';
 import {
   getDataFromLocalStorage,
   setDataToLocalStorage,
 } from './local-server/LocalServerData';
-const uuidv1 = require('uuid/v1');
-
-const defaultValue = [
-  { id: 'id-1', name: 'Rosie Simpson', number: '380444591256' },
-  { id: 'id-2', name: 'Hermione Kline', number: '380444438912' },
-  { id: 'id-3', name: 'Eden Clements', number: '380446451779' },
-  { id: 'id-4', name: 'Annie Copeland', number: '380442279126' },
-];
-const validName = '!@#$%^&*()_+"№%:,.;()_+-=1234567890 ';
-
-const filterTasks = (contacts, filter) => {
-  return contacts.filter(item => {
-    return item.name.toLowerCase().includes(filter.toLowerCase());
-  });
-};
 
 export default class App extends Component {
   state = {
     contacts: [],
     filter: '',
-    warnning: '',
+    toggleOpen: true,
   };
 
   componentDidMount() {
-    const contactsFromLocalStorage = getDataFromLocalStorage('contacts');
-    this.setState(({ contacts }) => ({
-      contacts: contactsFromLocalStorage,
-    }));
+    const contacts = getDataFromLocalStorage('contacts', defaultValue);
+    setDataToLocalStorage('contacts', [...contacts]);
+    this.setState({ contacts });
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(_ignore, prevState) {
     const { contacts } = this.state;
-    if (contacts.length === 0) {
-      setDataToLocalStorage('contacts', [...defaultValue]);
-      return;
-    }
 
     if (prevState.contacts.length === contacts.length) {
-      const isChanged = contacts.some(
-        (item, index) => item.id !== prevState.contacts[index].id,
+      const isEqual = contacts.every(
+        (item, index) => item.id === prevState.contacts[index].id,
       );
-      if (isChanged) {
-        setDataToLocalStorage('contacts', contacts);
-        return;
-      }
-      return;
+
+      if (isEqual) return;
     }
 
     setDataToLocalStorage('contacts', contacts);
+    this.setState({ contacts: [...contacts] });
   }
+
+  handleAddedContact = (name, number) => {
+    const { contacts } = this.state;
+
+    this.setState({
+      contacts: [...contacts, { id: uuidv1(), name, number }],
+    });
+  };
 
   handleChanges = ({ target }) => {
     const { name, value } = target;
     this.setState({ [name]: value });
-  };
-
-  handleDuplicate = () => {
-    this.setState({ warnning: '' });
   };
 
   handleRemove = ({ target }) => {
@@ -86,63 +77,85 @@ export default class App extends Component {
     });
   };
 
-  handleAddedContact = ({ name, number }) => {
-    if (name.includes(validName) || name === '') {
-      this.setState({
-        warnning: `You put invalid value: "${name}" into name field! Please, select another name`,
-      });
-      return;
-    }
-
-    if (isNaN(+number) || number === '') {
-      this.setState({
-        warnning: `You put invalid value: "${number}" into number field! Please, select another number`,
-      });
-      return;
-    }
-
-    const { contacts } = this.state;
-    const isDuplicateName = contacts.some(item => item.name === name);
-    const isDuplicateNumber = contacts.some(item => item.number === number);
-
-    if (isDuplicateName) {
-      this.setState({
-        warnning: `The "${name}" is already exist in contacts list! Please, select another name`,
-      });
-      return;
-    }
-
-    if (isDuplicateNumber) {
-      this.setState({
-        warnning: `The number: ${number} is already belongs to the "${name}" in your contacts list`,
-      });
-      return;
-    }
-
-    this.setState(prevState => ({
-      contacts: [...contacts, { id: uuidv1(), name, number }],
-    }));
+  handleClick = () => {
+    this.setState(({ toggleOpen }) => ({ toggleOpen: !toggleOpen }));
   };
 
   render() {
-    const { contacts, filter, warnning } = this.state;
+    const { contacts, filter, toggleOpen } = this.state;
     const filteredTasks = filterTasks(contacts, filter);
+    const toggleClass = classNames({
+      toggle: true,
+      open: toggleOpen,
+      up: contacts.length < 3,
+    });
 
     return (
       <PhoneWrapper>
         <div className={styles.wrp}>
-          <Notification
-            value={warnning}
-            title="Attention!"
-            onWarnning={this.handleDuplicate}
+          <CSSTransition in timeout={500} classNames="Logo" appear>
+            <h2 className={styles.title}>Phonebook</h2>
+          </CSSTransition>
+
+          <Duplicate
+            contacts={contacts}
+            onAddedContact={this.handleAddedContact}
+          >
+            {({ isOpen, toggleAlert, onAddedContact, content }) => (
+              <>
+                <CSSTransition
+                  in={isOpen}
+                  timeout={300}
+                  classNames={alert}
+                  unmountOnExit
+                >
+                  <Notification
+                    value={content}
+                    title="Attention!"
+                    onWarnning={toggleAlert}
+                  />
+                </CSSTransition>
+
+                <CSSTransition
+                  in={toggleOpen || !contacts.length}
+                  timeout={300}
+                  classNames={slideUpForm}
+                  unmountOnExit
+                >
+                  <div className={styles.container}>
+                    <ContactForm onAddedContact={onAddedContact} />
+                  </div>
+                </CSSTransition>
+              </>
+            )}
+          </Duplicate>
+
+          <div className={styles.contacts}>
+            {!!contacts.length && (
+              <button
+                type="button"
+                onClick={this.handleClick}
+                className={toggleClass}
+              />
+            )}
+            <CSSTransition
+              in={contacts.length > 2}
+              timeout={250}
+              classNames={slideUp}
+              unmountOnExit
+            >
+              <div className={styles.container}>
+                <h2 className={styles.title}>Contacts</h2>
+                <Filter value={filter} onFilterChanges={this.handleChanges} />
+              </div>
+            </CSSTransition>
+          </div>
+
+          <ContactsList
+            isOpen={toggleOpen}
+            contacts={filteredTasks}
+            onRemove={this.handleRemove}
           />
-          <h2 className={styles.title}>Phonebook</h2>
-          <ContactForm onAddedContact={this.handleAddedContact} />
-          <h2 className={styles.title}>Contacts</h2>
-          {contacts.length > 2 && (
-            <Filter value={filter} onFilterChanges={this.handleChanges} />
-          )}
-          <ContactsList contacts={filteredTasks} onRemove={this.handleRemove} />
         </div>
       </PhoneWrapper>
     );

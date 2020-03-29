@@ -1,3 +1,7 @@
+.label {
+  position: relative;
+}
+
 .subtitle {
   display: block;
   margin-top: 16px;
@@ -26,4 +30,12 @@
   border-radius: 6px;
   cursor: pointer;
   font-weight: 700;
+}
+
+.errors {
+  position: absolute;
+  top: 0;
+  left: 40px;
+  width: 250px;
+  color: rgb(255, 169, 169);
 }
