@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import uuidv1 from 'uuid/v1';
 
 // impor components
-import PhoneWrapper from '../phone-wrapper/PhoneWrapper.styled';
+import PhoneWrapper from '../../phone-wrapper/PhoneWrapper.styled';
 import ContactForm from '../contact-form/ContactForm';
 import ContactsList from '../contacts-list/ContactsList';
 import Filter from '../filter/Filter';
@@ -12,19 +12,19 @@ import Notification from '../notification/Notification';
 import Duplicate from '../render-props/Duplicate';
 
 // import styles
-import slideUp from '../transitions/slideUp.module.css';
-import alert from '../transitions/alert.module.css';
-import slideUpForm from '../transitions/slideUpForm.module.css';
+import slideUp from '../../transitions/slideUp.module.css';
+import alert from '../../transitions/alert.module.css';
+import slideUpForm from '../../transitions/slideUpForm.module.css';
 import styles from './App.module.css';
-import '../transitions/slideTitle.css';
+import '../../transitions/slideTitle.css';
 import '../base.css';
 
 // import utils
-import { defaultValue, filterTasks } from '../helpers/helpers';
+import { defaultValue, filterTasks } from '../../helpers/helpers';
 import {
   getDataFromLocalStorage,
   setDataToLocalStorage,
-} from '../local-storage/LocalStorageData';
+} from '../../local-storage/LocalStorageData';
 import { IContacts, IState } from '../../types';
 
 type Props = {};

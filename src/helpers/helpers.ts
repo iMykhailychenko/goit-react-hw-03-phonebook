@@ -1,4 +1,4 @@
-import { IContacts } from '../../types';
+import { IContacts } from '../types';
 
 const defaultValue: IContacts[] = [
   { id: 'id-1', name: 'Rosie Simpson', number: '380444591256' },

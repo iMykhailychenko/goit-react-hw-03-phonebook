@@ -1,4 +1,4 @@
-import { IContacts } from '../../types';
+import { IContacts } from '../types';
 
 const getDataFromLocalStorage = (
   key: string,

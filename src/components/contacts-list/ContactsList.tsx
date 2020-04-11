@@ -5,7 +5,7 @@ import { IContacts } from '../../types';
 
 // styles
 import styles from './ContactsList.module.css';
-import popTransition from '../transitions/pop.module.css';
+import popTransition from '../../transitions/pop.module.css';
 
 interface Props {
   contacts: IContacts[];
