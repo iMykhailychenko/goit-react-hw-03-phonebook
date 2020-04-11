@@ -1,4 +1,6 @@
-const defaultValue = [
+import { IContacts } from '../../types';
+
+const defaultValue: IContacts[] = [
   { id: 'id-1', name: 'Rosie Simpson', number: '380444591256' },
   { id: 'id-2', name: 'Rosie Simpson', number: '380444591256' },
   { id: 'id-3', name: 'Hermione Kline', number: '380444438912' },
@@ -9,7 +11,7 @@ const defaultValue = [
   { id: 'id-8', name: 'Hermione Kline', number: '380444438912' },
 ];
 
-const filterTasks = (contacts, filter) => {
+const filterTasks = (contacts: IContacts[], filter: string) => {
   return contacts.filter(item => {
     return item.name.toLowerCase().includes(filter.toLowerCase());
   });

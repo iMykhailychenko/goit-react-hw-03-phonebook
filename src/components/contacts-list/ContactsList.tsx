@@ -1,13 +1,19 @@
 import React from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import classNames from 'classnames';
-import PropTypes from 'prop-types';
+import { IContacts } from '../../types';
 
 // styles
 import styles from './ContactsList.module.css';
 import popTransition from '../transitions/pop.module.css';
 
-const ContactsForm = ({ contacts, onRemove, isOpen }) => {
+interface Props {
+  contacts: IContacts[];
+  onRemove(id: string): void;
+  isOpen: boolean;
+}
+
+const ContactsForm: React.FC<Props> = ({ contacts, onRemove, isOpen }) => {
   const boxHeight = classNames({
     contactsListWrp: true,
     contactsListWrpOpen: !isOpen,
@@ -25,8 +31,7 @@ const ContactsForm = ({ contacts, onRemove, isOpen }) => {
               </div>
               <button
                 className={styles.btn}
-                onClick={onRemove}
-                id={id}
+                onClick={() => onRemove(id)}
                 type="button"
               >
                 &#10005;
@@ -37,18 +42,6 @@ const ContactsForm = ({ contacts, onRemove, isOpen }) => {
       </TransitionGroup>
     </div>
   );
-};
-
-ContactsForm.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    }).isRequired,
-  ).isRequired,
-  onRemove: PropTypes.func.isRequired,
-  isOpen: PropTypes.bool.isRequired,
 };
 
 export default ContactsForm;

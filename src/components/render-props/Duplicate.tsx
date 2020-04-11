@@ -1,25 +1,31 @@
 import { Component } from 'react';
-import PropTypes from 'prop-types';
+import { IContacts } from '../../types';
 
-class Duplicate extends Component {
-  static propTypes = {
-    onAddedContact: PropTypes.func.isRequired,
-    contacts: PropTypes.arrayOf(
-      PropTypes.shape({
-        id: PropTypes.string.isRequired,
-        name: PropTypes.string.isRequired,
-        number: PropTypes.string.isRequired,
-      }).isRequired,
-    ).isRequired,
-    children: PropTypes.func.isRequired,
-  };
+interface State {
+  isOpen: boolean;
+  content: string;
+}
 
+interface ChildrenProps {
+  isOpen: boolean;
+  content: string;
+  toggleAlert(): void;
+  onAddedContact(name: string, number: string): void;
+}
+
+interface Props {
+  contacts: IContacts[];
+  onAddedContact(name: string, number: string): void;
+  children(props: ChildrenProps): JSX.Element;
+}
+
+class Duplicate extends Component<Props, State> {
   state = {
     isOpen: false,
     content: '',
   };
 
-  handleDuplicate = ({ name, number }) => {
+  handleDuplicate = (name: string, number: string) => {
     const { onAddedContact, contacts } = this.props;
     const isDuplicateName = contacts.some(item => item.name === name);
     const isDuplicateNumber = contacts.some(item => item.number === number);

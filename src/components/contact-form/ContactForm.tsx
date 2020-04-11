@@ -1,30 +1,33 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import PropTypes from 'prop-types';
 import styles from './ContactForm.module.css';
 
-const validName = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
-const validNumber = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+const validName: RegExp = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
+const validNumber: RegExp = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
 
-const ContactForm = ({ onAddedContact }) => {
+interface Props {
+  onAddedContact(name: string, number: string): void;
+}
+
+interface Values {
+  name?: string;
+  number?: string;
+}
+
+const ContactForm: React.FC<Props> = ({ onAddedContact }) => {
   return (
     <Formik
       initialValues={{ name: '', number: '' }}
-      validate={values => {
-        const errors = {};
-        if (!values.name) {
-          errors.name = 'This is required field';
-        } else if (!values.number) {
-          errors.number = 'This is required field';
-        } else if (!validName.test(values.name)) {
-          errors.name = 'Invalid name';
-        } else if (!validNumber.test(values.number)) {
-          errors.number = 'Invalid number';
-        }
+      validate={(values: Values): Values => {
+        const errors: Values = {};
+        if (!values.name) errors.name = 'This is required field';
+        if (!values.number) errors.number = 'This is required field';
+        if (!validName.test(values.name!)) errors.name = 'Invalid name';
+        if (!validNumber.test(values.number!)) errors.number = 'Invalid number';
 
         return errors;
       }}
-      onSubmit={values => onAddedContact(values)}
+      onSubmit={values => onAddedContact(values.name, values.number)}
     >
       {() => (
         <Form>
@@ -65,10 +68,6 @@ const ContactForm = ({ onAddedContact }) => {
       )}
     </Formik>
   );
-};
-
-ContactForm.propTypes = {
-  onAddedContact: PropTypes.func.isRequired,
 };
 
 export default ContactForm;

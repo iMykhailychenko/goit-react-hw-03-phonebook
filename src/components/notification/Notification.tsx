@@ -1,8 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import styles from './Notification.module.css';
 
-const Notification = ({ value, title, onWarnning }) => (
+interface Props {
+  value: string;
+  title: string;
+  onWarnning(): void;
+}
+
+const Notification: React.FC<Props> = ({ value, title, onWarnning }) => (
   <div className={styles.wrp}>
     <div className="popup">
       <h3 className={styles.title}>{title}</h3>
@@ -13,11 +18,5 @@ const Notification = ({ value, title, onWarnning }) => (
     </div>
   </div>
 );
-
-Notification.propTypes = {
-  value: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  onWarnning: PropTypes.func.isRequired,
-};
 
 export default Notification;
